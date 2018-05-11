@@ -5,18 +5,20 @@
 ####
 # Input FileName, MS-CP932 (shift-jis)
 ORG_FILE='./data_org/hoikusyotouitiran.csv'
-# Temp FileName, MS-CP932 (UTF-8)
+# Temp FileName, UTF-8
 ORG_UTF8='./data_org/hoiku.csv.utf8'
 
-# CSV FileName, MS-CP932 (UTF-8)
+# CSV FileName, UTF-8
 CSV_UTF8='./data_org/nurseryData.csv.utf8'
-# CSV FileName, MS-CP932 (UTF-8)
+# CSV FileName, MS-CP932
 CSV_FILE='./data_org/nurseryData.csv'
 
-# Temp FileName, MS-CP932 (UTF-8)
-GEOJOSN='./data_org/nurseryData.geojson'
+# Geojson FileName, UTF-8
+GEOJSON='./data_org/nurseryData.geojson'
 
 CSV_HEADER='Type,Name,AgeS,Full,Open,Close,OpenSAT,CloseSAT,OpenSTD,CloseSTD,OpenSHRT,CloseSHRT,Extra,Temp,Holiday,Night,Sick,AfterSick,TempByY,Lunch,Vacancy,Add1,TEL,Owner,Y,X,url,Remarks,Kodomo'
+
+CSV_HEADER_LONLAT='Type,Name,AgeS,Full,Open,Close,OpenSAT,CloseSAT,OpenSTD,CloseSTD,OpenSHRT,CloseSHRT,Extra,Temp,Holiday,Night,Sick,AfterSick,TempByY,Lunch,Vacancy,Add1,TEL,Owner,LAT,LON,url,Remarks,Kodomo'
 
 echo "----------------------------------------------------"
 echo "Convert Script for Nara Hoikusyo MAP from ${ORG_FILE}"
@@ -66,16 +68,19 @@ cat ${ORG_UTF8} | while read line ; do
 	    csvItem=("${csvItem[@]}" "N") 
 	fi
 
-	IFS=','
-	##	echo "${csvItem[*]}"
-	outline=${csvItem[*]}
-	IFS="$OIFS"
+	outline="$(IFS=,; echo "${csvItem[*]}")"
+#	echo "$outline"
     fi
 
-##    echo $outline | sed s/○/Y/g | sed  s/×/N/g 
     echo $outline | sed s/○/Y/g | sed  s/×/N/g >> ${CSV_UTF8}
 done
 
+#echo ""
+#echo "  Creae csv2geojson"
+#echo "  csv2geojson --lat Y --lon X ${CSV_UTF8} \> ${GEOJSON}"
+
+#cat ${CSV_UTF8} | sed s/\"\"/null/g > ${CSV_UTF8}_2
+#csv2geojson --lat Y --lon X  ${CSV_UTF8}_2 > ${GEOJSON}
 
 echo ""
 echo "  Convert Character code from UTF8 to SHIFT_JIS(CP932)"
@@ -96,5 +101,3 @@ echo "  Remove Temporaly Files"
 
 echo ""
 echo "  Finished" 
-
-
